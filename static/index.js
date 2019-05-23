@@ -12,6 +12,60 @@ const home = {
   `
 }
 
+const about = { 
+  template: `
+    <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+      <v-container grid-list-md>
+        <v-layout column align-center justify-center class="white--text">
+          <h1 class="mb-2 display-4 text-xs-center">Grupo 4</h1>
+        <v-layout>
+        <v-layout class="white--text">
+          <v-flex md3>
+            <v-container grid-list-md>
+              <v-layout>
+                <v-img src="../static/Picture1.png" ></v-img>
+              </v-layout>
+              <v-layout justify-center>
+                <h3 class="mt-2 text-xs-center">Verónica Ainsa</h3>
+              </v-layout>
+            </v-container>
+          </v-flex>
+          <v-flex md3>
+            <v-container grid-list-md>
+              <v-layout>
+                <v-img src="../static/Picture2.png" ></v-img>
+              </v-layout>
+              <v-layout justify-center>
+                <h3 class="mt-4 text-xs-center">Esteban Gold</h3>
+              </v-layout>
+            </v-container>
+          </v-flex>
+          <v-flex md3>
+            <v-container grid-list-md>
+              <v-layout>
+                <v-img src="../static/Picture3.png" ></v-img>
+              </v-layout>
+              <v-layout justify-center>
+                <h3 class="mt-2 text-xs-center">Hugo Giusti</h3>
+              </v-layout>
+            </v-container>
+          </v-flex>
+          <v-flex md3>
+            <v-container grid-list-md>
+              <v-layout>
+                <v-img src="../static/Picture4.png" ></v-img>
+              </v-layout>
+              <v-layout justify-center>
+                <h3 class="mt-4 text-xs-center">Jesús Lasserre</h3>
+              </v-layout>
+            </v-container>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-parallax>
+  `
+}
+
 const modelos = {
   template: `
     <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" class="text-md-center">
@@ -118,64 +172,136 @@ const testing = {
 const produccion = {
   template: `
     <v-card dark color="primary">
-      <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" class="text-md-center">
+      <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" height="650" class="text-md-center">
         <v-container grid-list-md>
           <v-layout column align-center class="white--text">
             <h1>Selecione un modelo para entrenar</h1>
           </v-layout>
-          <v-form ref="form" lazy-validation>
+          <form>
             <v-container grid-list-md>
-              <v-layout>
-                <v-flex md3>
-                  <v-select 
-                    color="white"
-                    v-model="barrio"
-                    :items="barrios"
-                    label="Barrios"
-                    :rules="[v => !!v || 'Elija un Barrio!!!!']">
-                  </v-select>
-                </v-flex>
-                <v-flex md3>
-                  <v-text-field 
-                    color="white"
-                    v-model="sup_total"
-                    label="Superficie Total"
-                    :rules="[v => (v && v.length > 0) || 'Ingrese un número!!!!']"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex md3>
-                  <v-text-field
-                    color="white"
-                    v-model="sup_cub"
-                    label="Superficie Cubierta"
-                    :rules="[v => (v && v.length > 0) || 'Ingrese un número!!!!']"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex md3>
-                  <v-text-field
-                    color="white"
-                    v-model="precio_total"
-                    label="Precio Total"
-                    :rules=" [v => (v && v.length > 0) || 'Ingrese un número!!!!']"
-                  ></v-text-field>
-                </v-flex>
-              </v-layout>
-              <v-layout>
-                <v-flex md4>
-                  <v-checkbox color="white" v-model="garage" label="Garage"></v-checkbox>
-                </v-flex>
-                <v-flex md4>
-                  <v-checkbox color="white" v-model="pileta" label="Pileta"></v-checkbox>
-                </v-flex>
-                <v-flex md4>
-                  <v-checkbox color="white" v-model="parrilla" label="Parrilla"></v-checkbox>
-                </v-flex>
-              </v-layout>
+              <v-card dark elevation="4" color="transparent">
+                <v-layout align-center class="white--text">
+                  <v-flex md4>
+                    <v-select 
+                      color="white"
+                      v-model="barrio"
+                      :items="barrios"
+                      label="Barrios"
+                    ></v-select>
+                  </v-flex>
+                  <v-flex md4>
+                    <v-text-field 
+                      color="white"
+                      v-model="sup_total"
+                      label="Superficie Total"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex md4>
+                    <v-text-field
+                      color="white"
+                      v-model="sup_cub"
+                      label="Superficie Cubierta"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+                <v-layout>
+                  <v-flex md4>
+                    <v-text-field
+                      color="white"
+                      v-model="precio_total_usd"
+                      label="Precio Total en USD"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex md4>
+                    <v-text-field
+                      color="white"
+                      v-model="precio_metro_usd"
+                      label="Precio Metro^2 en USD"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex md4>
+                    <v-text-field
+                      color="white"
+                      v-model="habitaciones"
+                      label="Habitaciones"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+              </v-card>
+              <v-card dark elevation="4" color="transparent" class='mt-3'>
+                <v-layout align-center class="white--text">
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="parrilla" label="Parrilla"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="gimnasio" label="Gimnasio"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="sum" label="Sum"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="pileta" label="Pileta"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="hidromasaje" label="Hidromasaje"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="vigilancia" label="Vigilancia"></v-checkbox>
+                  </v-flex>
+                </v-layout>
+                <v-layout align-center class="white--text">
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="playrooom" label="Playrooom"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="cancha" label="Cancha"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="solarium" label="Solarium"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="al_frente" label="Al Frente"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="nuevo" label="Nuevo"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="lavadero" label="Lavadero"></v-checkbox>
+                  </v-flex>
+                </v-layout>
+                <v-layout align-center class="white--text">
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="aire" label="AA"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="calefaccion" label="Calefaccion"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="luminoso" label="Luminoso"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="garage" label="Garage"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="balcon" label="Balcon"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="baulera" label="Baulera"></v-checkbox>
+                  </v-flex>
+                </v-layout>
+                <v-layout align-center class="white--text">
+                  <v-flex md2>
+                    <v-checkbox color="white" v-model="terraza" label="Terraza"></v-checkbox>
+                  </v-flex>
+                  <v-flex md10>
+                  </v-flex>
+                </v-layout>
+              </v-card>
             </v-container>
 
-            <v-btn large class="primary" :disabled="!form" @click="predict">Estimar</v-btn>
+            <v-btn large class="primary" :disabled="form" @click="predict">Estimar</v-btn>
             <v-btn large @click="clear">Limpiar</v-btn>
-          </v-form>
+          </form>
 
           <div class="text-xs-center" v-if="progreso">
             <v-progress-circular :size="80" indeterminate color="white"></v-progress-circular>
@@ -193,23 +319,46 @@ const produccion = {
   `,
   data () {
     return {
-      barrios: ['Almagro', 'Barrio Norte', 'Belgrano', 'Caballito', 'Flores', 'Palermo', 'Recoleta', 'San Telmo', 'Villa Crespo', 'Villa Urquiza'],
-      barrio: '',
+      // Parametros para el modelo
+      precio_total_usd: '',
       sup_total: '',
       sup_cub: '',
-      precio_total: '',
-      garage: false,
-      pileta: false,
-      parrilla: false,
+      precio_metro_usd: '',
+      habitaciones: '',
+      parrilla: true,
+      gimnasio: true,
+      sum: true,
+      pileta: true,
+      hidromasaje: true,
+      vigilancia: true,
+      playrooom: true,
+      cancha: true,
+      solarium: true,
+      al_frente: true,
+      nuevo: true,
+      lavadero: true,
+      aire: true,
+      calefaccion: true,
+      luminoso: true,
+      garage: true,
+      balcon: true,
+      baulera: true,
+      terraza: true,
+      //Parametros UI
+      barrios: ['Almagro', 'Barrio Norte', 'Belgrano', 'Caballito', 'Flores', 'Palermo', 'Recoleta', 'San Telmo', 'Villa Crespo', 'Villa Urquiza'],
+      barrio: '',
       dialogResultado: false,
       resultado: '',
-      progreso: false,
-      form: false,
-      rules: {
-        length: len => v => (v || '').length == len || `Ingrese un valor`,
-        barrio: v => (v || '').length == 0 || `Seleccione un Barrio`,
-        numero: v => (v || '').match(/^(?=.*\d).+$/) || 'Ingrese un número'
-      }
+      progreso: false
+    }
+  },
+  computed: {
+    form () {
+      if (this.precio_total_usd.length > 0 && this.sup_total.length > 0 && this.sup_cub.length > 0 && 
+          this.precio_metro_usd.length > 0 && this.habitaciones.length > 0 && this.barrio.length > 0)
+        return false
+      else
+        return true
     }
   },
   methods: {
@@ -217,6 +366,11 @@ const produccion = {
       this.dialogResultado = false
 
       let datos = {
+        'precio_total_usd': this.precio_total_usd,
+        'sup_total': this.sup_total,
+        'sup_cub': this.sup_cub,
+        'precio_metro_usd': this.precio_metro_usd,
+        'habitaciones': this.habitaciones,
         'almagro': 0,
         'barrio_norte': 0,
         'belgrano': 0,
@@ -227,145 +381,57 @@ const produccion = {
         'san_telmo': 0,
         'villa_crespo': 0,
         'villa_urquiza': 0,
-
-        'sup_total': this.sup_total,
-        'sup_cub': this.sup_cub,
-        'precio_total': this.precio_total,
-        'garage': ((this.garage)? 1 : 0),
+        'parrilla': ((this.parrilla)? 1 : 0),
+        'gimnasio': ((this.gimnasio)? 1 : 0),
+        'sum': ((this.sum)? 1 : 0),
         'pileta': ((this.pileta)? 1 : 0),
-        'parrilla': ((this.parrilla)? 1 : 0)
+        'hidromasaje': ((this.hidromasaje)? 1 : 0),
+        'vigilancia': ((this.vigilancia)? 1 : 0),
+        'playrooom': ((this.playrooom)? 1 : 0),
+        'cancha': ((this.cancha)? 1 : 0),
+        'solarium': ((this.solarium)? 1 : 0),
+        'al_frente': ((this.al_frente)? 1 : 0),
+        'nuevo': ((this.nuevo)? 1 : 0),
+        'lavadero': ((this.lavadero)? 1 : 0),
+        'aire': ((this.aire)? 1 : 0),
+        'calefaccion': ((this.calefaccion)? 1 : 0),
+        'luminoso': ((this.luminoso)? 1 : 0),
+        'garage': ((this.garage)? 1 : 0),
+        'balcon': ((this.balcon)? 1 : 0),
+        'baulera': ((this.baulera)? 1 : 0),
+        'terraza': ((this.terraza)? 1 : 0)
       }
 
       switch (this.barrio) {
         case 'Almagro':
           datos.almagro = 1
-          datos.barrio_norte = 0
-          datos.belgrano = 0
-          datos.caballito = 0
-          datos.flores = 0
-          datos.palermo = 0
-          datos.recoleta = 0
-          datos.san_telmo = 0
-          datos.villa_crespo = 0
-          datos.villa_urquiza = 0
-
           break
         case 'Barrio Norte':
-          datos.almagro = 0
           datos.barrio_norte = 1
-          datos.belgrano = 0
-          datos.caballito = 0
-          datos.flores = 0
-          datos.palermo = 0
-          datos.recoleta = 0
-          datos.san_telmo = 0
-          datos.villa_crespo = 0
-          datos.villa_urquiza = 0
-
           break
         case 'Belgrano':
-          datos.almagro = 0
-          datos.barrio_norte = 0
-          datos.belgrano = 1
-          datos.caballito = 0
-          datos.flores = 0
-          datos.palermo = 0
-          datos.recoleta = 0
-          datos.san_telmo = 0
-          datos.villa_crespo = 0
-          datos.villa_urquiza = 0
-          
+          datos.belgrano = 1        
           break
         case 'Caballito':
-          datos.almagro = 0
-          datos.barrio_norte = 0
-          datos.belgrano = 0
           datos.caballito = 1
-          datos.flores = 0
-          datos.palermo = 0
-          datos.recoleta = 0
-          datos.san_telmo = 0
-          datos.villa_crespo = 0
-          datos.villa_urquiza = 0
-          
           break
         case 'Flores':
-          datos.almagro = 0
-          datos.barrio_norte = 0
-          datos.belgrano = 0
-          datos.caballito = 0
           datos.flores = 1
-          datos.palermo = 0
-          datos.recoleta = 0
-          datos.san_telmo = 0
-          datos.villa_crespo = 0
-          datos.villa_urquiza = 0
-          
           break
         case 'Palermo':
-          datos.almagro = 0
-          datos.barrio_norte = 0
-          datos.belgrano = 0
-          datos.caballito = 0
-          datos.flores = 0
           datos.palermo = 1
-          datos.recoleta = 0
-          datos.san_telmo = 0
-          datos.villa_crespo = 0
-          datos.villa_urquiza = 0
-          
           break
         case 'Recoleta':
-          datos.almagro = 0
-          datos.barrio_norte = 0
-          datos.belgrano = 0
-          datos.caballito = 0
-          datos.flores = 0
-          datos.palermo = 0
           datos.recoleta = 1
-          datos.san_telmo = 0
-          datos.villa_crespo = 0
-          datos.villa_urquiza = 0
-          
             break
         case 'San Telmo':
-          datos.almagro = 0
-          datos.barrio_norte = 0
-          datos.belgrano = 0
-          datos.caballito = 0
-          datos.flores = 0
-          datos.palermo = 0
-          datos.recoleta = 0
           datos.san_telmo = 1
-          datos.villa_crespo = 0
-          datos.villa_urquiza = 0
-          
           break
         case 'Villa Crespo':
-          datos.almagro = 0
-          datos.barrio_norte = 0
-          datos.belgrano = 0
-          datos.caballito = 0
-          datos.flores = 0
-          datos.palermo = 0
-          datos.recoleta = 0
-          datos.san_telmo = 0
           datos.villa_crespo = 1
-          datos.villa_urquiza = 0
-          
           break
         case 'Villa Urquiza':
-          datos.almagro = 0
-          datos.barrio_norte = 0
-          datos.belgrano = 0
-          datos.caballito = 0
-          datos.flores = 0
-          datos.palermo = 0
-          datos.recoleta = 0
-          datos.san_telmo = 0
-          datos.villa_crespo = 0
           datos.villa_urquiza = 1
-          
           break
       }    
 
@@ -378,14 +444,37 @@ const produccion = {
       });
     },
     clear () {
+      //Textfields
       this.barrio = ''
       this.sup_total = ''
       this.sup_cub = ''
       this.precio_total = ''
-      this.garage = false
-      this.pileta = false
-      this.parrilla = false
-
+      this.precio_total_usd = ''
+      this.precio_metro_usd = ''
+      this.habitaciones = ''
+      
+      //Checks
+      this.garage = true
+      this.pileta = true
+      this.parrilla = true
+      this.gimnasio = true
+      this.sum = true
+      this.pileta = true
+      this.hidromasaje = true
+      this.vigilancia = true
+      this.playrooom = true
+      this.cancha = true
+      this.solarium = true
+      this.al_frente = true
+      this.nuevo = true
+      this.lavadero = true
+      this.aire = true
+      this.calefaccion = true
+      this.luminoso = true
+      this.garage = true
+      this.balcon = true
+      this.baulera = true
+      this.terraza = true
     }
   }
 }
@@ -416,6 +505,11 @@ var routes = [{
   path: '/produccion',
   name: 'produccion',
   component: produccion,
+},
+{
+  path: '/about',
+  name: 'about',
+  component: about,
 }];
 
 const router = new VueRouter({

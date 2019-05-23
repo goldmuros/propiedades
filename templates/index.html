@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Properati Grupo 4</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-content>
+          <v-container class="pt-0">
+            <v-toolbar dark color="primary">
+              <v-toolbar-title class="white--text">Properati Grupo 4</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-toolbar-items>
+                <v-btn flat to="/">Home</v-btn>
+                <v-btn flat to="/modelos">Modelos</v-btn>
+                <v-btn flat to="/testing">Testing</v-btn>
+                <v-btn flat to="/produccion">Produccion</v-btn>
+              </v-toolbar-items>
+            </v-toolbar>
+            <v-layout>
+              <v-flex>
+                <router-view></router-view>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-content>
+      </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+    <script src="{{ url_for('static', filename='index.js') }}"></script>    
+  </body>
+</html>

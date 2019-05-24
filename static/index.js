@@ -72,9 +72,21 @@ const modelos = {
       <v-container grid-list-md>
         <v-layout column align-center justify-center class="white--text">
           <h1>Entrenemos los modelos (Linear Regression, Lasso y Ridge)</h1>
-          <v-btn large color="primary" @click="fitear">
-            <v-icon left>fitness_center</v-icon> Entrenar
-          </v-btn>
+
+          <form id="model_form" class="pt-2" role="form" enctype="multipart/form-data" method="POST">
+            <v-container grid-list-md>
+              <v-layout>
+                <v-flex md9>
+                  <input type="file" name="file" id="file_modelos" color="primary" style='width: 100%;'>
+                </v-flex>
+                <v-flex md3>
+                  <v-btn large color="primary" @click="fitear">
+                    <v-icon left>fitness_center</v-icon> Entrenar
+                  </v-btn>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </form>
           <div class="text-xs-center" v-if="progreso">
             <v-progress-circular :size="80" indeterminate color="white"></v-progress-circular>
           </div>
@@ -120,7 +132,9 @@ const modelos = {
       this.showModelos = false
       this.resultados = []
 
-      let datos = {'modelo': this.modelo}
+      let datos = new FormData()
+      datos.append('file', document.getElementById('file_modelos').files[0])
+      // let datos = {'modelo': this.modelo}
 
       this.progreso = true
       self = this
@@ -169,14 +183,14 @@ const testing = {
       <v-container grid-list-md>
         <v-layout column align-center class="white--text">
           <h1>Ingrese un archivo con datos</h1>
-          <form id="upload_form" class="pt-2" role="form" enctype="multipart/form-data" method="POST">
+          <form id="testing_form" class="pt-2" role="form" enctype="multipart/form-data" method="POST">
             <v-container grid-list-md>
               <v-layout>
                 <v-flex md3>
                   <v-select :items="modelos" label="Modelos" solo v-model="modelo"></v-select>
                 </v-flex>
                 <v-flex md6>
-                  <input type="file" name="file" id="file" color="primary" style='width: 70%;'>
+                  <input type="file" name="file" id="file_testing" color="primary" style='width: 80%;'>
                 </v-flex>
                 <v-flex md3>
                   <v-btn large color="primary" @click="testing">
@@ -230,7 +244,7 @@ const testing = {
       self.showModelo = false
 
       let datos = new FormData()
-      datos.append('file', document.getElementById('file').files[0])
+      datos.append('file', document.getElementById('file_testing').files[0])
       datos.append('model', this.modelo)
 
       this.progreso = true
@@ -254,16 +268,14 @@ const testing = {
 const produccion = {
   template: `
     <v-card dark color="primary">
-      <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" height="650" class="text-md-center">
-        <v-container grid-list-md>
+      <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" height="720" class="text-md-center">
+        <v-container >
           <v-layout column align-center class="white--text">
-            <h1>Selecione un modelo para entrenar</h1>
-          </v-layout>
-          <form>
-            <v-container grid-list-md>
-              <v-card dark elevation="4" color="transparent">
+            <v-select :items="modelos" label="Modelos" solo v-model="modelo"></v-select>
+            <form>
+              <v-card dark elevation="4" color="transparent" class="pl-4 pr-4">
                 <v-layout align-center class="white--text">
-                  <v-flex md4>
+                  <v-flex md4 class="mr-2">
                     <v-select 
                       color="white"
                       v-model="barrio"
@@ -271,7 +283,7 @@ const produccion = {
                       label="Barrios"
                     ></v-select>
                   </v-flex>
-                  <v-flex md4>
+                  <v-flex md4 class="mr-2">
                     <v-text-field 
                       color="white"
                       v-model="sup_total"
@@ -287,14 +299,14 @@ const produccion = {
                   </v-flex>
                 </v-layout>
                 <v-layout>
-                  <v-flex md4>
+                  <v-flex md4 class="mr-2">
                     <v-text-field
                       color="white"
                       v-model="precio_total_usd"
                       label="Precio Total en USD"
                     ></v-text-field>
                   </v-flex>
-                  <v-flex md4>
+                  <v-flex md4 class="mr-2">
                     <v-text-field
                       color="white"
                       v-model="precio_metro_usd"
@@ -309,93 +321,143 @@ const produccion = {
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
+                <v-layout>
+                  <v-flex md4 class="mr-2">
+                    <v-text-field
+                      color="white"
+                      v-model="bus_stop"
+                      label="Paradas de Colectivos"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex md4 class="mr-2">
+                    <v-text-field
+                      color="white"
+                      v-model="subway"
+                      label="Subte"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex md4>
+                    <v-text-field
+                      color="white"
+                      v-model="park"
+                      label="Parques"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+                <v-layout>
+                  <v-flex md4 class="mr-2">
+                    <v-text-field
+                      color="white"
+                      v-model="school"
+                      label="Escuelas"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex md4 class="mr-2">
+                    <v-text-field
+                      color="white"
+                      v-model="police"
+                      label="Estaciones de Policia"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex md4>
+                    <v-text-field
+                      color="white"
+                      v-model="hospital"
+                      label="Hospital"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
               </v-card>
-              <v-card dark elevation="4" color="transparent" class='mt-3'>
+              <v-card dark elevation="4" color="transparent" class="mt-3 pl-5">
                 <v-layout align-center class="white--text">
-                  <v-flex md2>
+                  <v-flex md2 class="mr-2">
                     <v-checkbox color="white" v-model="parrilla" label="Parrilla"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-3">
                     <v-checkbox color="white" v-model="gimnasio" label="Gimnasio"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-1">
                     <v-checkbox color="white" v-model="sum" label="Sum"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-4">
                     <v-checkbox color="white" v-model="pileta" label="Pileta"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-2">
                     <v-checkbox color="white" v-model="hidromasaje" label="Hidromasaje"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                </v-layout>
+                <v-layout align-center class="white--text">
+                  <v-flex md2 class="mr-2">
                     <v-checkbox color="white" v-model="vigilancia" label="Vigilancia"></v-checkbox>
                   </v-flex>
-                </v-layout>
-                <v-layout align-center class="white--text">
-                  <v-flex md2>
+                  <v-flex md2 class="mr-3 ">
                     <v-checkbox color="white" v-model="playrooom" label="Playrooom"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-1">
                     <v-checkbox color="white" v-model="cancha" label="Cancha"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-4">
                     <v-checkbox color="white" v-model="solarium" label="Solarium"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-2">
                     <v-checkbox color="white" v-model="al_frente" label="Al Frente"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                </v-layout>
+                <v-layout align-center class="white--text">
+                  <v-flex md2 class="mr-2">
                     <v-checkbox color="white" v-model="nuevo" label="Nuevo"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-3">
                     <v-checkbox color="white" v-model="lavadero" label="Lavadero"></v-checkbox>
                   </v-flex>
-                </v-layout>
-                <v-layout align-center class="white--text">
-                  <v-flex md2>
+                  <v-flex md2 class="mr-1">
                     <v-checkbox color="white" v-model="aire" label="AA"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-4">
                     <v-checkbox color="white" v-model="calefaccion" label="Calefaccion"></v-checkbox>
                   </v-flex>
-                  <v-flex md2>
+                  <v-flex md2 class="mr-2">
                     <v-checkbox color="white" v-model="luminoso" label="Luminoso"></v-checkbox>
-                  </v-flex>
-                  <v-flex md2>
-                    <v-checkbox color="white" v-model="garage" label="Garage"></v-checkbox>
-                  </v-flex>
-                  <v-flex md2>
-                    <v-checkbox color="white" v-model="balcon" label="Balcon"></v-checkbox>
-                  </v-flex>
-                  <v-flex md2>
-                    <v-checkbox color="white" v-model="baulera" label="Baulera"></v-checkbox>
                   </v-flex>
                 </v-layout>
                 <v-layout align-center class="white--text">
-                  <v-flex md2>
+                  <v-flex md2 class="mr-2">
+                    <v-checkbox color="white" v-model="garage" label="Garage"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2 class="mr-3">
+                    <v-checkbox color="white" v-model="balcon" label="Balcon"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2 class="mr-1">
+                    <v-checkbox color="white" v-model="baulera" label="Baulera"></v-checkbox>
+                  </v-flex>
+                  <v-flex md2 class="mr-4">
                     <v-checkbox color="white" v-model="terraza" label="Terraza"></v-checkbox>
                   </v-flex>
-                  <v-flex md10>
+                  <v-flex md2>
                   </v-flex>
                 </v-layout>
               </v-card>
-            </v-container>
 
-            <v-btn large class="primary" :disabled="form" @click="predict">Estimar</v-btn>
-            <v-btn large @click="clear">Limpiar</v-btn>
-          </form>
-
-          <div class="text-xs-center" v-if="progreso">
-            <v-progress-circular :size="80" indeterminate color="white"></v-progress-circular>
-          </div>
+              <v-btn large class="primary mt-3" :disabled="form" @click="predict">Estimar</v-btn>
+              <v-btn large class="mt-3" @click="clear">Limpiar</v-btn>
+            </form>
+          </v-layout>
         </v-container>
       </v-parallax>
-      <v-dialog v-model="dialogResultado" width="200">
-        <v-card>
-          <v-card-text class="text-xs-center display-4 headline font-weight-bold">
-            {{ resultado }}
-          </v-card-text>
-        </v-card>
+      <v-dialog v-model="dialogResultado" width="500">
+        <v-data-table
+          :headers="cabecera"
+          :items="resultado"
+          class="elevation-1"
+          hide-actions
+          dark
+        >
+          <template v-slot:items="props">
+            <td>{{ props.item.model }}</td>
+            <td class="text-xs-right">{{ props.item.mean_squared_error }}</td>
+            <td class="text-xs-right">{{ props.item.r2_score }}</td>
+          </template>
+        </v-data-table>
       </v-dialog>
     </v-card>
   `,
@@ -407,6 +469,12 @@ const produccion = {
       sup_cub: '',
       precio_metro_usd: '',
       habitaciones: '',
+      bus_stop: '',
+      subway: '',
+      park: '',
+      school: '',
+      police: '',
+      hospital: '',
       parrilla: true,
       gimnasio: true,
       sum: true,
@@ -430,14 +498,23 @@ const produccion = {
       barrios: ['Almagro', 'Barrio Norte', 'Belgrano', 'Caballito', 'Flores', 'Palermo', 'Recoleta', 'San Telmo', 'Villa Crespo', 'Villa Urquiza'],
       barrio: '',
       dialogResultado: false,
-      resultado: '',
-      progreso: false
+      resultado: [],
+      cabecera: [
+        { text: 'Modelo', align: 'left', sortable: false, value: 'model'},
+        { text: 'Mean Squared Error', align: 'center', sortable: false, value: 'mean_squared_error' },
+        { text: 'R2 Score', align: 'center', sortable: false, value: 'r2_score' }
+      ],
+      modelos: ['Linear Regression', 'Lasso', 'Ridge'],
+      modelo: ''
     }
   },
   computed: {
     form () {
       if (this.precio_total_usd.length > 0 && this.sup_total.length > 0 && this.sup_cub.length > 0 && 
-          this.precio_metro_usd.length > 0 && this.habitaciones.length > 0 && this.barrio.length > 0)
+          this.precio_metro_usd.length > 0 && this.habitaciones.length > 0 && this.barrio.length > 0 &&
+          this.bus_stop.length > 0 && this.subway.length > 0 && this.park.length > 0 && 
+          this.school.length > 0 && this.police.length > 0 && this.hospital.length > 0 &&
+          this.modelo.length > 0)
         return false
       else
         return true
@@ -448,11 +525,18 @@ const produccion = {
       this.dialogResultado = false
 
       let datos = {
+        'model': this.modelo,
         'precio_total_usd': this.precio_total_usd,
         'sup_total': this.sup_total,
         'sup_cub': this.sup_cub,
         'precio_metro_usd': this.precio_metro_usd,
         'habitaciones': this.habitaciones,
+        'bus_stop': this.bus_stop,
+        'subway': this.subway,
+        'park': this.park,
+        'school': this.school,
+        'police': this.police,
+        'hospital': this.hospital,
         'almagro': 0,
         'barrio_norte': 0,
         'belgrano': 0,
@@ -517,12 +601,16 @@ const produccion = {
           break
       }    
 
-      this.progreso = true
       self = this
-      axios.post('/produccion',datos).then(function (response) {
-        self.progreso = false
+      axios.post('/produccion',datos).then(function (response) {        
+        let modelo = {
+          'model': response.data.result.model,
+          'mean_squared_error': response.data.result.mean_squared_error,
+          'r2_score': response.data.result.r2_score
+        }
+
+        self.resultado.push(modelo)
         self.dialogResultado = true
-        self.resultado = response.data.result
       });
     },
     clear () {
@@ -534,6 +622,12 @@ const produccion = {
       this.precio_total_usd = ''
       this.precio_metro_usd = ''
       this.habitaciones = ''
+      this.bus_stop = ''
+      this.subway = ''
+      this.park = ''
+      this.school = ''
+      this.police = ''
+      this.hospital = ''
       
       //Checks
       this.garage = true
@@ -570,28 +664,22 @@ var routes = [{
 {
   path: '/modelos',
   name: 'modelos',
-  component: modelos,
-  // children: [{
-  //   path: 'user/:userId',
-  //   name: 'named_id',
-  //   components: { user_details: User, sidebar: Sidebar },
-  //   props: { user_details: true, sidebar: false }
-  // }]
+  component: modelos
 },
 {
   path: '/testing',
   name: 'testing',
-  component: testing,
+  component: testing
 },
 {
   path: '/produccion',
   name: 'produccion',
-  component: produccion,
+  component: produccion
 },
 {
   path: '/about',
   name: 'about',
-  component: about,
+  component: about
 }];
 
 const router = new VueRouter({

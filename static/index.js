@@ -71,30 +71,45 @@ const modelos = {
     <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" class="text-md-center">
       <v-container grid-list-md>
         <v-layout column align-center justify-center class="white--text">
-          <h1>Selecione un modelo para entrenar</h1>
+          <h1>Entrenemos los modelos (Linear Regression, Lasso y Ridge)</h1>
+          <v-btn large color="primary" @click="fitear">
+            <v-icon left>fitness_center</v-icon> Entrenar
+          </v-btn>
+          <div class="text-xs-center" v-if="progreso">
+            <v-progress-circular :size="80" indeterminate color="white"></v-progress-circular>
+          </div>
         </v-layout>
-        
-        <v-select :items="items" label="Modelos" solo v-model="modelo"></v-select>
-        <v-btn large color="primary" @click="fitear">Fitear</v-btn>
-
-        <div class="text-xs-center" v-if="progreso">
-          <v-progress-circular :size="80" indeterminate color="white"></v-progress-circular>
-        </div>
+        <v-layout column align-center justify-center class="white--text" v-if="showModelos"
+          color="transparent">
+          <v-data-table
+            :headers="cabecera"
+            :items="resultado"
+            class="elevation-1"
+            hide-actions
+            dark
+          >
+            <template v-slot:items="props">
+              <td>{{ props.item.model }}</td>
+              <td class="text-xs-right">{{ props.item.mean }}</td>
+              <td class="text-xs-right">{{ props.item.std }}</td>
+              <td class="text-xs-right">{{ props.item.score }}</td>
+              <td class="text-xs-right">{{ props.item.alpha }}</td>
+            </template>
+          </v-data-table>
+        </v-layout>
       </v-container>
-      <v-dialog v-model="dialogResultado" width="200">
-        <v-card>
-          <v-card-text class="text-xs-center display-4 headline font-weight-bold">
-            {{ resultado }}
-          </v-card-text>
-        </v-card>
-      </v-dialog>
     </v-parallax>
   `,
   data () {
     return {
-      items: ['Regresión Lineal', 'Lasso', 'Ridge'],
-      modelo: '',
-      dialogResultado: false,
+      cabecera: [
+        { text: 'Modelo', align: 'left', sortable: false, value: 'model'},
+        { text: 'Mean', align: 'center', value: 'mean' },
+        { text: 'Std', align: 'center', value: 'std' },
+        { text: 'Score', align: 'center', value: 'score' },
+        { text: 'Alpha', align: 'center', value: 'alpha' }
+      ],
+      showModelos: false,
       resultado: [],
       progreso: false
     }
@@ -102,8 +117,8 @@ const modelos = {
   methods: {
     fitear () {
       this.dialogResultado = false
-      if (this.modelo === 'Regresión Lineal')
-        this.modelo = 'RegresionLineal'
+      this.showModelos = false
+      this.resultados = []
 
       let datos = {'modelo': this.modelo}
 
@@ -111,8 +126,38 @@ const modelos = {
       self = this
       axios.post('/modelo',datos).then(function (response) {
         self.progreso = false
-        self.dialogResultado = true
-        self.resultado = response.data.result
+        
+        let lasso = {
+          'model': 'Lasso',
+          'mean': response.data.result.Lasso.mean,
+          'std': response.data.result.Lasso.std,
+          'score': response.data.result.Lasso.score,
+          'alpha': response.data.result.Lasso.alpha
+        }
+
+        self.resultado.push(lasso)
+
+        let ridge = {
+          'model': 'Ridge',
+          'mean': response.data.result.Ridge.mean,
+          'std': response.data.result.Ridge.std,
+          'score': response.data.result.Ridge.score,
+          'alpha': response.data.result.Ridge.alpha
+        }
+
+        self.resultado.push(ridge)
+
+        let linear_regression = {
+          'model': 'Linear Regression',
+          'mean': response.data.result.LinearRegression.mean,
+          'std': response.data.result.LinearRegression.std,
+          'score': response.data.result.LinearRegression.score,
+          'alpha': ''
+        }
+
+        self.resultado.push(linear_regression)
+
+        self.showModelos = true
       });
     }
   }
@@ -124,46 +169,83 @@ const testing = {
       <v-container grid-list-md>
         <v-layout column align-center class="white--text">
           <h1>Ingrese un archivo con datos</h1>
+          <form id="upload_form" class="pt-2" role="form" enctype="multipart/form-data" method="POST">
+            <v-container grid-list-md>
+              <v-layout>
+                <v-flex md3>
+                  <v-select :items="modelos" label="Modelos" solo v-model="modelo"></v-select>
+                </v-flex>
+                <v-flex md6>
+                  <input type="file" name="file" id="file" color="primary" style='width: 70%;'>
+                </v-flex>
+                <v-flex md3>
+                  <v-btn large color="primary" @click="testing">
+                    <v-icon left>backup</v-icon> test
+                  </v-btn>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </form>
+          <div class="text-xs-center" v-if="progreso">
+            <v-progress-circular :size="80" indeterminate color="white"></v-progress-circular>
+          </div>
         </v-layout>
-        
-        <form id="upload_form" class="pt-2" role="form" enctype="multipart/form-data" method="POST">
-          <input type="file" name="file" id="file" color="primary" style='width: 70%;'>
-          <v-btn large color="primary" @click="upload">upload</v-btn>
-        </form>
-        
-        <div class="text-xs-center" v-if="progreso">
-          <v-progress-circular :size="80" indeterminate color="white"></v-progress-circular>
-        </div>
+        <v-layout column align-center justify-center class="white--text" v-if="showModelo"
+          color="transparent">
+          <v-data-table
+            :headers="cabecera"
+            :items="resultado"
+            class="elevation-1"
+            hide-actions
+            dark
+          >
+            <template v-slot:items="props">
+              <td>{{ props.item.model }}</td>
+              <td class="text-xs-right">{{ props.item.mean_squared_error }}</td>
+              <td class="text-xs-right">{{ props.item.r2_score }}</td>
+            </template>
+          </v-data-table>
+        </v-layout>
       </v-container>
-
-      <v-dialog v-model="dialogResultado" width="200">
-        <v-card>
-          <v-card-text class="text-xs-center display-4 headline font-weight-bold">
-            {{ resultado }}
-          </v-card-text>
-        </v-card>
-      </v-dialog>
     </v-parallax>
   `,
   data () {
     return {
+      modelos: ['Linear Regression', 'Lasso', 'Ridge'],
+      modelo: '',
+      cabecera: [
+        { text: 'Modelo', align: 'left', sortable: false, value: 'model'},
+        { text: 'Mean Squared Error', align: 'center', sortable: false, value: 'mean_squared_error' },
+        { text: 'R2 Score', align: 'center', sortable: false, value: 'r2_score' }
+      ],
+      showModelo: false,
+      resultado: [],
       progreso: false,
-      dialogResultado: false,
-      resultado: '',
       file: null
     }
   },
   methods: {
-    upload(){
+    testing () {
+      this.resultado = []
+      self.showModelo = false
+
       let datos = new FormData()
       datos.append('file', document.getElementById('file').files[0])
+      datos.append('model', this.modelo)
 
       this.progreso = true
       self = this
       axios.post('/testing',datos).then(function (response) {
         self.progreso = false
-        self. dialogResultado = true
-        self.resultado = response.data.result
+        
+        let modelo = {
+          'model': response.data.result.model,
+          'mean_squared_error': response.data.result.mean_squared_error,
+          'r2_score': response.data.result.r2_score
+        }
+
+        self.resultado.push(modelo)
+        self.showModelo = true
       });
     }
   }

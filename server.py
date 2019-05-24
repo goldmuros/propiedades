@@ -1,12 +1,11 @@
-from flask import Flask, render_template, redirect, request, url_for, jsonify
-from werkzeug.utils import secure_filename
+from flask import Flask, render_template, request, url_for, jsonify
 import pandas as pd
 import numpy as np
 import models as models
 
 app = Flask(__name__)
 
-df_modelos = models.prepararDatos()
+df_train = models.prepararDatos()
 
 #Home
 @app.route('/')
@@ -17,11 +16,11 @@ def home():
 @app.route('/modelo', methods=['POST'])
 def modelo():
   if request.method == 'POST':
-    result_lr = models.linear_regression(df_modelos)
-    result_lasso = models.lasso(df_modelos)
-    result_ridge = models.ridge(df_modelos)
+    result_lr = models.linear_regression(df_train)
+    result_lasso = models.lasso(df_train)
+    result_ridge = models.ridge(df_train)
     
-    results = {'LinearRegretion': {
+    results = {'LinearRegression': {
                   'score': result_lr.tolist(),
                   'mean': np.mean(result_lr),
                   'std': np.std(result_lr) 
@@ -42,17 +41,17 @@ def modelo():
     
     return jsonify({'result': results})
 
-
 #Testing
 @app.route('/testing', methods=['POST'])
 def testing():
   if request.method == 'POST':
     file = request.files['file']
+    model = request.form['model']
 
-    df = pd.read_csv(file)
-    print('HOLA PANDAS: ', df)
-
-    return jsonify({'result': 'ok'})
+    df_test = pd.read_csv(file)
+    result = models.predic(df_train, df_test, model)
+      
+    return jsonify({'result': result})
 
 #Producción
 @app.route('/produccion', methods=['POST'])

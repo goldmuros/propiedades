@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression, LassoCV, RidgeCV
 from sklearn.model_selection import cross_val_score
+from sklearn.metrics import r2_score, mean_squared_error
 
 feature_cols = ['price_aprox_usd', 'surface_total_in_m2',
                 'surface_covered_in_m2', 'rooms',
@@ -10,9 +11,6 @@ feature_cols = ['price_aprox_usd', 'surface_total_in_m2',
                 '_playrooom', '_cancha', '_solarium', '_al_frente', '_nuevo?',
                 '_lavadero', '_aire', '_calefaccion', '_luminoso', '_garage', '_balcon',
                 '_baulera', '_terraza']
-
-# lasso_alpha_ = 0
-# ridge_alpha_ = 0
 
 def prepararDatos():
   return pd.read_csv('datos_finales.csv')
@@ -33,7 +31,6 @@ def lasso(df):
   score = cross_val_score(model, X, y_price_usd, cv=5, scoring='r2')
 
   model.fit(X, y_price_usd)
-  # lasso_alpha_ = model.alpha_
   
   results = {
     'score': score,
@@ -49,7 +46,6 @@ def ridge(df):
   score = cross_val_score(model, X, y_price_usd, cv=5, scoring='r2')
 
   model.fit(X, y_price_usd)
-  # ridge_alpha_ = model.alpha_
   
   results = {
     'score': score,
@@ -57,8 +53,26 @@ def ridge(df):
   }
   return results
 
-# def lasso_alpha():
-#   return lasso_alpha_
+def predic(df_fit, df_predic, model):
+  X_train = df_fit[feature_cols]
+  y_train = df_fit.price_usd_per_m2
 
-# def ridge_alpha():
-#   return ridge_alpha_
+  X_test = df_predic[feature_cols]
+  y_test = df_predic.price_usd_per_m2
+
+  if (model == 'Linear Regression'):
+    m = LinearRegression()
+  elif (model == 'Lasso'):
+    m = LassoCV()
+  elif (model == 'Ridge'):
+    m = RidgeCV()
+
+  m.fit(X_train, y_train)
+
+  pred = m.predict(X_test)
+
+  results = { 'model': model,
+              'r2_score': r2_score(y_test, pred),
+              'mean_squared_error': mean_squared_error(y_test, pred) }
+
+  return results

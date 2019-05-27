@@ -1,102 +1,154 @@
 import pandas as pd
-from sklearn.linear_model import LinearRegression, LassoCV, RidgeCV
 from sklearn.model_selection import cross_val_score
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+import numpy as np
+import pickle
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, Lasso, LassoCV, Ridge, RidgeCV
+from sklearn.preprocessing import StandardScaler
 
-feature_cols = ['price_aprox_usd', 'surface_total_in_m2', 'surface_covered_in_m2', 'rooms', 'bus_stop',	
-                'subway',	'park',	'school',	'police',	'hospital',
-                'Almagro', 'Barrio Norte', 'Belgrano', 'Caballito', 'Flores', 'Palermo',
-                'Recoleta', 'San Telmo', 'Villa Crespo', 'Villa Urquiza', '_parrilla',
-                '_gimnasio', '_sum', '_pileta', '_hidromasaje', '_vigilancia',
-                '_playrooom', '_cancha', '_solarium', '_al_frente', '_nuevo?',
-                '_lavadero', '_aire', '_calefaccion', '_luminoso', '_garage', '_balcon',
-                '_baulera', '_terraza']
+df_r = pd.DataFrame()
 
-def prepararDatos():
-  return pd.read_csv('datos_train.csv')
-
-def linear_regression(df):
-  X = df[feature_cols]
-  y_price_usd = df.price_usd_per_m2
-
-  model = LinearRegression()
-  results = cross_val_score(model, X, y_price_usd, cv=5)
-  return results
-
-def lasso(df):
-  X = df[feature_cols]
-  y_price_usd = df.price_usd_per_m2
+def prepararDatos(file, test_run):
+  df = pd.read_csv(file)
+  y = df['price_usd_per_m2']
+  if (test_run == 'Regularization'):
+    features_drops = ['Unnamed: 0', 'price_usd_per_m2']
+  else:
+    features_drops = ['Unnamed: 0', 'price_usd_per_m2', 'price_per_m2']
   
-  model = LassoCV()
-  score = cross_val_score(model, X, y_price_usd, cv=5, scoring='r2')
+  X = df.drop(features_drops, axis=1)
+  print('HOLA ', len(X.columns))
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
-  model.fit(X, y_price_usd)
+  X_train = StandardScaler().fit_transform(X_train)
+  X_test = StandardScaler().fit_transform(X_test)
   
-  results = {
-    'score': score,
-    'alpha': model.alpha_
-  }
-  return results  
+  return X_train, X_test, y_train, y_test, df
 
-def ridge(df):
-  X = df[feature_cols]
-  y_price_usd = df.price_usd_per_m2
-  
-  model = RidgeCV()
-  score = cross_val_score(model, X, y_price_usd, cv=5, scoring='r2')
+def predict(data_input, model):
+  X = data_input['X_train']
+  y = data_input['y_train']
+  X_test = data_input['X_test']
+  y_test = data_input['y_test']
 
-  model.fit(X, y_price_usd)
-  
-  results = {
-    'score': score,
-    'alpha': model.alpha_
-  }
-  return results
+  test_run = data_input['test_run']
 
-def predic(df_fit, df_predic, model):
-  X_train = df_fit[feature_cols]
-  y_train = df_fit.price_usd_per_m2
-
-  X_test = df_predic[feature_cols]
-  y_test = df_predic.price_usd_per_m2
-
-  if (model == 'Linear Regression'):
+  if (model == 'lr'):
     m = LinearRegression()
-  elif (model == 'Lasso'):
-    m = LassoCV()
-  elif (model == 'Ridge'):
-    m = RidgeCV()
+  elif (model == 'lasso'):
+    if (test_run == 'Simple'):
+      m = Lasso()
+    else:
+      m = LassoCV()
+  elif (model == 'ridge'):
+    if (test_run == 'Simple'):
+      m = Ridge()
+    else:
+      m = RidgeCV()
 
-  m.fit(X_train, y_train)
+  model_fit = m.fit(X, y)
 
-  pred = m.predict(X_test)
+ 
+  name_pickle = model + '.pkl'
+  with open(name_pickle, 'wb') as f_model:
+    pickle.dump(model_fit, f_model)
+  
+  f_model.close()
+
+  score = 0
+  if (test_run == 'Simple'):
+    score = model_fit.score(X, y)
+  else:
+    score = cross_val_score(m, X, y, cv=5)  
+
+  y_pred = m.predict(X_test)
+
+  dict_coef_ = {}
+  if (model != 'lr'):
+    df_r = data_input['df']
+
+    features_drops = ['Unnamed: 0', 'price_usd_per_m2', 'price_per_m2']
+
+    df = df_r.drop(features_drops, axis=1)
+    dict_coef_ = dict(zip(df.columns, model_fit.coef_))
+ 
+  if (model == 'lr'):
+    return {'score': score,
+            'intercept_': model_fit.intercept_,
+            'coef_': model_fit.coef_,
+            'r2': r2_score(y_test, y_pred),
+            'MAE': mean_absolute_error(y_test,y_pred),
+            'MSE': mean_squared_error(y_test,y_pred),
+            'RMSE': np.sqrt(mean_squared_error(y_test,y_pred))}
+  else:
+    if (test_run == 'Simple'):
+      return {'score': score,
+            'intercept_': model_fit.intercept_,
+            'coef_': model_fit.coef_,
+            'r2': r2_score(y_test, y_pred),
+            'MAE': mean_absolute_error(y_test,y_pred),
+            'MSE': mean_squared_error(y_test,y_pred),
+            'RMSE': np.sqrt(mean_squared_error(y_test,y_pred))}
+    else:
+      return {'score': score,
+              'intercept_': model_fit.intercept_,
+              'coef_': dict_coef_,
+              'r2': r2_score(y_test, y_pred),
+              'MAE': mean_absolute_error(y_test,y_pred),
+              'MSE': mean_squared_error(y_test,y_pred),
+              'RMSE': np.sqrt(mean_squared_error(y_test,y_pred)),
+              'alpha_': m.alpha_}
+
+def predic_prod(data):
+  model = data['model']
+
+  name_pickle = model + '.pkl'
+  with open(name_pickle, 'rb') as f_model:
+    model_fit = pickle.load(f_model)
+
+  data_list = read_data_json(data)
+
+  print('HOLA ', len(data_list[0]))
+
+  predic = model_fit.predict(data_list)
 
   results = { 'model': model,
-              'r2_score': r2_score(y_test, pred),
-              'mean_squared_error': mean_squared_error(y_test, pred) }
+              'predic': predic.tolist()}
 
   return results
 
-def predic_prod(df_fit, df_predic, model, predic_column):
-  X_train = df_fit[feature_cols]
-  y_train = df_fit.price_usd_per_m2
+def read_data_json(data):
+  df = [[
+    np.float64(data['precio_total_usd']),
+    np.float64(data['sup_total']),
+    np.float64(data['sup_cub']),
+    np.float64(data['habitaciones']),
+    np.int64(data['bus_stop']),
+    np.int64(data['subway']),
+    np.int64(data['park']),
+    np.int64(data['school']),
+    np.int64(data['police']),
+    np.int64(data['hospital']),
+    np.int64(data['parrilla']),
+    np.int64(data['gimnasio']),
+    np.int64(data['sum']),
+    np.int64(data['pileta']),
+    np.int64(data['hidromasaje']),
+    np.int64(data['vigilancia']),
+    np.int64(data['playrooom']),
+    np.int64(data['cancha']),
+    np.int64(data['solarium']),
+    np.int64(data['al_frente']),
+    np.int64(data['nuevo']),
+    np.int64(data['lavadero']),
+    np.int64(data['aire']),
+    np.int64(data['calefaccion']),
+    np.int64(data['luminoso']),
+    np.int64(data['garage']),
+    np.int64(data['balcon']),
+    np.int64(data['baulera']),
+    np.int64(data['terraza'])
+  ]]
 
-  X_test = df_predic #Array numpy con 1 solo registro
-  y_test = predic_column #otro array pero con 1 solo valor
-
-  if (model == 'Linear Regression'):
-    m = LinearRegression()
-  elif (model == 'Lasso'):
-    m = LassoCV()
-  elif (model == 'Ridge'):
-    m = RidgeCV()
-
-  m.fit(X_train, y_train)
-
-  pred = m.predict(X_test)
-
-  results = { 'model': model,
-              'r2_score': r2_score(y_test, pred),
-              'mean_squared_error': mean_squared_error(y_test, pred) }
-
-  return results
+  return df

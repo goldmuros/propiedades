@@ -5,6 +5,7 @@ import models as models
 
 app = Flask(__name__)
 
+
 #Home
 @app.route('/')
 def home():
@@ -15,107 +16,84 @@ def home():
 def modelo():
   if request.method == 'POST':
     file = request.files['file']
+    test_run = request.form['test']
 
-    df_train = pd.read_csv(file)
+    X_train, X_test, y_train, y_test, df_recoleta = models.prepararDatos(file, test_run)
 
-    result_lr = models.linear_regression(df_train)
-    result_lasso = models.lasso(df_train)
-    result_ridge = models.ridge(df_train)
+    data_input = {'X_train': X_train,
+                  'y_train': y_train,
+                  'X_test': X_test,
+                  'y_test': y_test,
+                  'test_run': test_run,
+                  'df': df_recoleta}
+
+    result_lr = models.predict(data_input, 'lr')
+    result_lasso = models.predict(data_input, 'lasso')
+    result_ridge = models.predict(data_input, 'ridge')
     
+    if (test_run == 'Simple'):
+      data_complex = {'LinearRegression': {'score': result_lr['score']},
+                      'Lasso': {'score': result_lasso['score'],
+                                'coef': {},
+                                'alpha_': ''},
+                      'Ridge': {'score': result_ridge['score'],
+                                'coef': {},
+                                'alpha_': ''}
+      }
+    else:
+      data_complex = {'LinearRegression': {'score': result_lr['score'].tolist()},
+                      'Lasso': {'score': result_lasso['score'].tolist(),
+                                'coef': result_lasso['coef_'],
+                                'alpha_': result_lasso['alpha_']},
+                      'Ridge': {'score': result_ridge['score'].tolist(),
+                                'coef': result_ridge['coef_'],
+                                'alpha_': result_ridge['alpha_']}
+      }
+
     results = {'LinearRegression': {
-                  'score': result_lr.tolist(),
-                  'mean': np.mean(result_lr),
-                  'std': np.std(result_lr) 
+                  'score': data_complex['LinearRegression']['score'],
+                  'intercept': result_lr['intercept_'],
+                  'coef': result_lr['coef_'].tolist(),
+                  'r2': result_lr['r2'],
+                  'mae': result_lr['MAE'],
+                  'mse': result_lr['MSE'],
+                  'rmse': result_lr['RMSE']
                   },
                 'Lasso': {
-                      'score': result_lasso['score'].tolist(),
-                      'mean': np.mean(result_lasso['score']),
-                      'std': np.std(result_lasso['score']),
-                      'alpha': result_lasso['alpha']
+                      'score': data_complex['Lasso']['score'],
+                      'intercept': result_lasso['intercept_'],
+                      'coef': data_complex['Lasso']['coef'],
+                      'r2': result_lasso['r2'],
+                      'mae': result_lasso['MAE'],
+                      'mse': result_lasso['MSE'],
+                      'rmse': result_lasso['RMSE'],
+                      'alpha': data_complex['Lasso']['alpha_']
                     },
                 'Ridge': {
-                      'score': result_ridge['score'].tolist(),
-                      'mean': np.mean(result_ridge['score']),
-                      'std': np.std(result_ridge['score']),
-                      'alpha': result_ridge['alpha']
+                      'score': data_complex['Ridge']['score'],
+                      'intercept': result_ridge['intercept_'],
+                      'coef': data_complex['Ridge']['coef'],
+                      'r2': result_ridge['r2'],
+                      'mae': result_ridge['MAE'],
+                      'mse': result_ridge['MSE'],
+                      'rmse': result_ridge['RMSE'],
+                      'alpha': data_complex['Ridge']['alpha_']
                       }
                   }
     
     return jsonify({'result': results})
 
-#Testing
-@app.route('/testing', methods=['POST'])
-def testing():
-  if request.method == 'POST':
-    file = request.files['file']
-    model = request.form['model']
-
-    df_train = models.prepararDatos()
-    df_test = pd.read_csv(file)
-    result = models.predic(df_train, df_test, model)
-      
-    return jsonify({'result': result})
 
 #Producción
 @app.route('/produccion', methods=['POST'])
 def produccion():
   if request.method == 'POST':
     data_json = request.get_json(force=True)
-
-    model = data_json['model']
-    predic_column = [[np.float64(data_json['precio_metro_usd'])]]
-
-    df_train = models.prepararDatos()
-    df_prod = read_data_json(data_json)
     
-    result = models.predic_prod(df_train, df_prod, model, predic_column)
+    result = models.predic_prod(data_json)
 
+    print(result)
     return jsonify({'result': result})
-
-def read_data_json(data):
-  df = [[
-    np.float64(data['precio_total_usd']),
-    np.float64(data['sup_total']),
-    np.float64(data['sup_cub']),
-    np.float64(data['habitaciones']),
-    np.float64(data['bus_stop']),
-    np.float64(data['subway']),
-    np.float64(data['park']),
-    np.float64(data['school']),
-    np.float64(data['police']),
-    np.float64(data['hospital']),
-    np.float64(data['almagro']),
-    np.float64(data['barrio_norte']),
-    np.float64(data['belgrano']),
-    np.float64(data['caballito']),
-    np.float64(data['flores']),
-    np.float64(data['palermo']),
-    np.float64(data['recoleta']),
-    np.float64(data['san_telmo']),
-    np.float64(data['villa_crespo']),
-    np.float64(data['villa_urquiza']),
-    np.float64(data['parrilla']),
-    np.float64(data['gimnasio']),
-    np.float64(data['sum']),
-    np.float64(data['pileta']),
-    np.float64(data['hidromasaje']),
-    np.float64(data['vigilancia']),
-    np.float64(data['playrooom']),
-    np.float64(data['cancha']),
-    np.float64(data['solarium']),
-    np.float64(data['al_frente']),
-    np.float64(data['nuevo']),
-    np.float64(data['lavadero']),
-    np.float64(data['aire']),
-    np.float64(data['calefaccion']),
-    np.float64(data['luminoso']),
-    np.float64(data['garage']),
-    np.float64(data['balcon']),
-    np.float64(data['baulera']),
-    np.float64(data['terraza'])
-  ]]
-
-  return df
 
 if __name__ == "__main__":
   app.run(debug=True)

@@ -3,8 +3,8 @@ const home = {
     <v-parallax src="http://cdn28.us1.fansshare.com/photograph/miniaturemodels/miniature-model-home-sitting-on-laptop-keyboard-real-estate-on-the-internet-concept-wallpaper-1514417922.jpg">
       <v-container grid-list-md>
         <v-layout column align-center justify-center class="white--text">
-          <h1 class="mb-2 display-1 text-xs-center">Properati</h1>
-          <h2 class="mb-2 display-4 text-xs-center"> It's awsomeee</h2>
+          <h1 class="mb-2 display-3 text-xs-center">Properati</h1>
+          <h2 class="mb-2 display-4 text-xs-center"> It's awesomeee</h2>
           <div class="subheading mb-3 text-xs-center">Powered by Group 4</div>
         </v-layout>
       </v-container>
@@ -23,40 +23,40 @@ const about = {
           <v-flex md3>
             <v-container grid-list-md>
               <v-layout>
-                <v-img src="../static/Picture1.png" ></v-img>
+                <v-img src="../static/imagenes/Picture1.png" ></v-img>
               </v-layout>
               <v-layout justify-center>
-                <h3 class="mt-2 text-xs-center">Verónica Ainsa</h3>
+                <h3 class="mt-2 text-xs-center">Verónica</h3>
               </v-layout>
             </v-container>
           </v-flex>
           <v-flex md3>
             <v-container grid-list-md>
               <v-layout>
-                <v-img src="../static/Picture2.png" ></v-img>
+                <v-img src="../static/imagenes/Picture2.png"></v-img>
               </v-layout>
               <v-layout justify-center>
-                <h3 class="mt-4 text-xs-center">Esteban Gold</h3>
+                <h3 class="mt-4 text-xs-center">Esteban</h3>
               </v-layout>
             </v-container>
           </v-flex>
           <v-flex md3>
             <v-container grid-list-md>
               <v-layout>
-                <v-img src="../static/Picture3.png" ></v-img>
+                <v-img src="../static/imagenes/Picture3.png" ></v-img>
               </v-layout>
               <v-layout justify-center>
-                <h3 class="mt-2 text-xs-center">Hugo Giusti</h3>
+                <h3 class="mt-2 text-xs-center">Hugo</h3>
               </v-layout>
             </v-container>
           </v-flex>
           <v-flex md3>
             <v-container grid-list-md>
               <v-layout>
-                <v-img src="../static/Picture4.png" ></v-img>
+                <v-img src="../static/imagenes/Picture4.png" ></v-img>
               </v-layout>
               <v-layout justify-center>
-                <h3 class="mt-4 text-xs-center">Jesús Lasserre</h3>
+                <h3 class="mt-4 text-xs-center">Jesús</h3>
               </v-layout>
             </v-container>
           </v-flex>
@@ -68,7 +68,7 @@ const about = {
 
 const modelos = {
   template: `
-    <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" class="text-md-center">
+    <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" class="text-md-center" height="850">
       <v-container grid-list-md>
         <v-layout column align-center justify-center class="white--text">
           <h1>Entrenemos los modelos (Linear Regression, Lasso y Ridge)</h1>
@@ -76,7 +76,10 @@ const modelos = {
           <form id="model_form" class="pt-2" role="form" enctype="multipart/form-data" method="POST">
             <v-container grid-list-md>
               <v-layout>
-                <v-flex md9>
+                <v-flex md3>
+                  <v-select :items="pruebas" label="Pruebas" solo v-model="prueba"></v-select>
+                </v-flex>
+                <v-flex md6>
                   <input type="file" name="file" id="file_modelos" color="primary" style='width: 100%;'>
                 </v-flex>
                 <v-flex md3>
@@ -93,83 +96,183 @@ const modelos = {
         </v-layout>
         <v-layout column align-center justify-center class="white--text" v-if="showModelos"
           color="transparent">
+          <h2 class="mdisplay-2 text-xs-center">Linear Regression</h2>
           <v-data-table
-            :headers="cabecera"
-            :items="resultado"
+            :headers="cabecera_linear_regression"
+            :items="resultado_linear_regression"
             class="elevation-1"
             hide-actions
             dark
           >
             <template v-slot:items="props">
-              <td>{{ props.item.model }}</td>
-              <td class="text-xs-right">{{ props.item.mean }}</td>
-              <td class="text-xs-right">{{ props.item.std }}</td>
+              <td class="text-xs-right">{{ props.item.intercept_ }}</td>
               <td class="text-xs-right">{{ props.item.score }}</td>
-              <td class="text-xs-right">{{ props.item.alpha }}</td>
+              <td class="text-xs-right">{{ props.item.r2 }}</td>
+              <td class="text-xs-right">{{ props.item.mae }}</td>
+              <td class="text-xs-right">{{ props.item.mse }}</td>
+              <td class="text-xs-right">{{ props.item.rmse }}</td>
+            </template>
+          </v-data-table>
+          <h2 class="mdisplay-2 text-xs-center">Lasso</h2>
+          <v-data-table
+            :headers="cabecera"
+            :items="resultado_lasso"
+            class="elevation-1"
+            hide-actions
+            dark
+          >
+            <template v-slot:items="props">
+              <tr @click="openDialog('Lasso')">
+                <td class="text-xs-right">{{ props.item.intercept_ }}</td>
+                <td class="text-xs-right">{{ props.item.score }}
+                <td class="text-xs-right">{{ props.item.r2 }}</td>
+                <td class="text-xs-right">{{ props.item.mae }}</td>
+                <td class="text-xs-right">{{ props.item.mse }}</td>
+                <td class="text-xs-right">{{ props.item.rmse }}</td>
+                <td class="text-xs-right">{{ props.item.alpha }}</td>
+              </tr>
+            </template>
+          </v-data-table>
+          <h2 class="mdisplay-2 text-xs-center">Ridge</h2>
+          <v-data-table
+            :headers="cabecera"
+            :items="resultado_ridge"
+            class="elevation-1"
+            hide-actions
+            dark
+          >
+            <template v-slot:items="props">
+              <tr @click="openDialog('Ridge')">
+                <td class="text-xs-right">{{ props.item.intercept_ }}</td>
+                <td class="text-xs-right">{{ props.item.score }}
+                <td class="text-xs-right">{{ props.item.r2 }}</td>
+                <td class="text-xs-right">{{ props.item.mae }}</td>
+                <td class="text-xs-right">{{ props.item.mse }}</td>
+                <td class="text-xs-right">{{ props.item.rmse }}</td>
+                <td class="text-xs-right">{{ props.item.alpha }}</td>
+              </tr>
             </template>
           </v-data-table>
         </v-layout>
       </v-container>
+      <v-dialog v-model="dialog" max-width="500px">
+        <v-card>
+          <v-card-title primary-title>
+            <h1> {{ modelo }} </h1>
+          </v-card-title>
+          <v-card-text>
+            <v-data-table
+              :items="coef"
+              class="elevation-1"
+              hide-actions
+              hide-headers
+              dark
+            >
+              <template v-slot:items="props">
+                <td class="text-xs-right">{{ props.item.columna }}</td>
+                <td class="text-xs-right">{{ props.item.valor }}</td>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-parallax>
   `,
   data () {
     return {
-      cabecera: [
-        { text: 'Modelo', align: 'left', sortable: false, value: 'model'},
-        { text: 'Mean', align: 'center', value: 'mean' },
-        { text: 'Std', align: 'center', value: 'std' },
+      dialog: false,
+      pruebas: ['Simple', 'Cross Validation'],
+      prueba: '',
+      cabecera_linear_regression: [
+        { text: 'Intercept', align: 'center', value: 'intercept_' },
         { text: 'Score', align: 'center', value: 'score' },
+        { text: 'R2', align: 'center', value: 'r2' },
+        { text: 'MAE', align: 'center', value: 'mae' },
+        { text: 'MSE', align: 'center', value: 'mse' },
+        { text: 'RMSE', align: 'center', value: 'rmse' }
+      ],
+      cabecera: [
+        { text: 'Intercept', align: 'center', value: 'intercept_' },
+        { text: 'Score', align: 'center', value: 'score' },
+        { text: 'R2', align: 'center', value: 'r2' },
+        { text: 'MAE', align: 'center', value: 'mae' },
+        { text: 'MSE', align: 'center', value: 'mse' },
+        { text: 'RMSE', align: 'center', value: 'rmse' },
         { text: 'Alpha', align: 'center', value: 'alpha' }
       ],
       showModelos: false,
-      resultado: [],
+      resultado_linear_regression: [],
+      resultado_lasso: [],
+      resultado_ridge: [],
+      coef: [],
+      modelo: '',
       progreso: false
     }
   },
   methods: {
+    openDialog(nombre_modelo) {
+      this.dialog = true
+      this.modelo = nombre_modelo
+      this.coef = []
+
+      if (nombre_modelo === 'Lasso')
+        sCoef = JSON.stringify(this.resultado_lasso[0].coef).substring(1,JSON.stringify(this.resultado_lasso[0].coef).length - 1)//Lasso
+      else
+        sCoef = JSON.stringify(this.resultado_ridge[0].coef).substring(1,JSON.stringify(this.resultado_ridge[0].coef).length - 1)//Ridge
+
+      aCoef = sCoef.split(',')
+      for(i= 0; i < aCoef.length; i++){
+        dato = aCoef[i].split(':')
+        this.coef.push({'columna': dato[0].split('"').join(''), 'valor': dato[1]}) 
+      }
+    },
     fitear () {
       this.dialogResultado = false
       this.showModelos = false
       this.resultados = []
 
+      if (this.prueba === 'Cross Validation')
+        this.prueba = 'CV'
+        
       let datos = new FormData()
       datos.append('file', document.getElementById('file_modelos').files[0])
-      // let datos = {'modelo': this.modelo}
+      datos.append('test', this.prueba)
 
       this.progreso = true
       self = this
       axios.post('/modelo',datos).then(function (response) {
         self.progreso = false
         
-        let lasso = {
-          'model': 'Lasso',
-          'mean': response.data.result.Lasso.mean,
-          'std': response.data.result.Lasso.std,
+        self.resultado_lasso = [{
+          'intercept_': response.data.result.Lasso.intercept,
           'score': response.data.result.Lasso.score,
-          'alpha': response.data.result.Lasso.alpha
-        }
+          'r2': response.data.result.Lasso.r2,
+          'mae': response.data.result.Lasso.mae,
+          'mse': response.data.result.Lasso.mse,
+          'rmse': response.data.result.Lasso.rmse,
+          'alpha': response.data.result.Lasso.alpha,
+          'coef': response.data.result.Lasso.coef,
+        }]
 
-        self.resultado.push(lasso)
-
-        let ridge = {
-          'model': 'Ridge',
-          'mean': response.data.result.Ridge.mean,
-          'std': response.data.result.Ridge.std,
+        self.resultado_ridge = [{
+          'intercept_': response.data.result.Ridge.intercept,
           'score': response.data.result.Ridge.score,
-          'alpha': response.data.result.Ridge.alpha
-        }
+          'r2': response.data.result.Ridge.r2,
+          'mae': response.data.result.Ridge.mae,
+          'mse': response.data.result.Ridge.mse,
+          'rmse': response.data.result.Ridge.rmse,
+          'alpha': response.data.result.Ridge.alpha,
+          'coef': response.data.result.Ridge.coef,
+        }]
 
-        self.resultado.push(ridge)
-
-        let linear_regression = {
-          'model': 'Linear Regression',
-          'mean': response.data.result.LinearRegression.mean,
-          'std': response.data.result.LinearRegression.std,
+        self.resultado_linear_regression = [{
+          'intercept_': response.data.result.LinearRegression.intercept,
           'score': response.data.result.LinearRegression.score,
-          'alpha': ''
-        }
-
-        self.resultado.push(linear_regression)
+          'r2': response.data.result.LinearRegression.r2,
+          'mae': response.data.result.LinearRegression.mae,
+          'mse': response.data.result.LinearRegression.mse,
+          'rmse': response.data.result.LinearRegression.rmse
+        }]
 
         self.showModelos = true
       });
@@ -177,97 +280,9 @@ const modelos = {
   }
 }
 
-const testing = { 
-  template: `
-    <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" class="text-md-center">
-      <v-container grid-list-md>
-        <v-layout column align-center class="white--text">
-          <h1>Ingrese un archivo con datos</h1>
-          <form id="testing_form" class="pt-2" role="form" enctype="multipart/form-data" method="POST">
-            <v-container grid-list-md>
-              <v-layout>
-                <v-flex md3>
-                  <v-select :items="modelos" label="Modelos" solo v-model="modelo"></v-select>
-                </v-flex>
-                <v-flex md6>
-                  <input type="file" name="file" id="file_testing" color="primary" style='width: 80%;'>
-                </v-flex>
-                <v-flex md3>
-                  <v-btn large color="primary" @click="testing">
-                    <v-icon left>backup</v-icon> test
-                  </v-btn>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </form>
-          <div class="text-xs-center" v-if="progreso">
-            <v-progress-circular :size="80" indeterminate color="white"></v-progress-circular>
-          </div>
-        </v-layout>
-        <v-layout column align-center justify-center class="white--text" v-if="showModelo"
-          color="transparent">
-          <v-data-table
-            :headers="cabecera"
-            :items="resultado"
-            class="elevation-1"
-            hide-actions
-            dark
-          >
-            <template v-slot:items="props">
-              <td>{{ props.item.model }}</td>
-              <td class="text-xs-right">{{ props.item.mean_squared_error }}</td>
-              <td class="text-xs-right">{{ props.item.r2_score }}</td>
-            </template>
-          </v-data-table>
-        </v-layout>
-      </v-container>
-    </v-parallax>
-  `,
-  data () {
-    return {
-      modelos: ['Linear Regression', 'Lasso', 'Ridge'],
-      modelo: '',
-      cabecera: [
-        { text: 'Modelo', align: 'left', sortable: false, value: 'model'},
-        { text: 'Mean Squared Error', align: 'center', sortable: false, value: 'mean_squared_error' },
-        { text: 'R2 Score', align: 'center', sortable: false, value: 'r2_score' }
-      ],
-      showModelo: false,
-      resultado: [],
-      progreso: false,
-      file: null
-    }
-  },
-  methods: {
-    testing () {
-      this.resultado = []
-      self.showModelo = false
-
-      let datos = new FormData()
-      datos.append('file', document.getElementById('file_testing').files[0])
-      datos.append('model', this.modelo)
-
-      this.progreso = true
-      self = this
-      axios.post('/testing',datos).then(function (response) {
-        self.progreso = false
-        
-        let modelo = {
-          'model': response.data.result.model,
-          'mean_squared_error': response.data.result.mean_squared_error,
-          'r2_score': response.data.result.r2_score
-        }
-
-        self.resultado.push(modelo)
-        self.showModelo = true
-      });
-    }
-  }
-}
-
 const produccion = {
   template: `
-    <v-card dark color="primary">
+    <v-card color="primary">
       <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" height="720" class="text-md-center">
         <v-container >
           <v-layout column align-center class="white--text">
@@ -276,12 +291,7 @@ const produccion = {
               <v-card dark elevation="4" color="transparent" class="pl-4 pr-4">
                 <v-layout align-center class="white--text">
                   <v-flex md4 class="mr-2">
-                    <v-select 
-                      color="white"
-                      v-model="barrio"
-                      :items="barrios"
-                      label="Barrios"
-                    ></v-select>
+                    
                   </v-flex>
                   <v-flex md4 class="mr-2">
                     <v-text-field 
@@ -452,10 +462,9 @@ const produccion = {
           hide-actions
           dark
         >
-          <template v-slot:items="props">
+          <template v-slot:items="props" class="display-3">
             <td>{{ props.item.model }}</td>
-            <td class="text-xs-right">{{ props.item.mean_squared_error }}</td>
-            <td class="text-xs-right">{{ props.item.r2_score }}</td>
+            <td class="text-xs-right">{{ props.item.predic }}</td>
           </template>
         </v-data-table>
       </v-dialog>
@@ -495,14 +504,11 @@ const produccion = {
       baulera: true,
       terraza: true,
       //Parametros UI
-      barrios: ['Almagro', 'Barrio Norte', 'Belgrano', 'Caballito', 'Flores', 'Palermo', 'Recoleta', 'San Telmo', 'Villa Crespo', 'Villa Urquiza'],
-      barrio: '',
       dialogResultado: false,
       resultado: [],
       cabecera: [
         { text: 'Modelo', align: 'left', sortable: false, value: 'model'},
-        { text: 'Mean Squared Error', align: 'center', sortable: false, value: 'mean_squared_error' },
-        { text: 'R2 Score', align: 'center', sortable: false, value: 'r2_score' }
+        { text: 'Predic', align: 'center', sortable: false, value: 'predic' }
       ],
       modelos: ['Linear Regression', 'Lasso', 'Ridge'],
       modelo: ''
@@ -511,7 +517,7 @@ const produccion = {
   computed: {
     form () {
       if (this.precio_total_usd.length > 0 && this.sup_total.length > 0 && this.sup_cub.length > 0 && 
-          this.precio_metro_usd.length > 0 && this.habitaciones.length > 0 && this.barrio.length > 0 &&
+          this.precio_metro_usd.length > 0 && this.habitaciones.length > 0 &&
           this.bus_stop.length > 0 && this.subway.length > 0 && this.park.length > 0 && 
           this.school.length > 0 && this.police.length > 0 && this.hospital.length > 0 &&
           this.modelo.length > 0)
@@ -524,8 +530,21 @@ const produccion = {
     predict () {
       this.dialogResultado = false
 
+      let modelo = ''
+      switch (this.modelo) {
+        case 'Linear Regression':
+          modelo = 'lr'
+          break
+        case 'Lasso':
+          modelo = 'lasso'
+          break
+        case 'Ridge':
+          modelo = 'ridge'
+          break
+      }
+
       let datos = {
-        'model': this.modelo,
+        'model': modelo,
         'precio_total_usd': this.precio_total_usd,
         'sup_total': this.sup_total,
         'sup_cub': this.sup_cub,
@@ -537,16 +556,6 @@ const produccion = {
         'school': this.school,
         'police': this.police,
         'hospital': this.hospital,
-        'almagro': 0,
-        'barrio_norte': 0,
-        'belgrano': 0,
-        'caballito': 0,
-        'flores': 0,
-        'palermo': 0,
-        'recoleta': 0,
-        'san_telmo': 0,
-        'villa_crespo': 0,
-        'villa_urquiza': 0,
         'parrilla': ((this.parrilla)? 1 : 0),
         'gimnasio': ((this.gimnasio)? 1 : 0),
         'sum': ((this.sum)? 1 : 0),
@@ -568,48 +577,27 @@ const produccion = {
         'terraza': ((this.terraza)? 1 : 0)
       }
 
-      switch (this.barrio) {
-        case 'Almagro':
-          datos.almagro = 1
-          break
-        case 'Barrio Norte':
-          datos.barrio_norte = 1
-          break
-        case 'Belgrano':
-          datos.belgrano = 1        
-          break
-        case 'Caballito':
-          datos.caballito = 1
-          break
-        case 'Flores':
-          datos.flores = 1
-          break
-        case 'Palermo':
-          datos.palermo = 1
-          break
-        case 'Recoleta':
-          datos.recoleta = 1
-            break
-        case 'San Telmo':
-          datos.san_telmo = 1
-          break
-        case 'Villa Crespo':
-          datos.villa_crespo = 1
-          break
-        case 'Villa Urquiza':
-          datos.villa_urquiza = 1
-          break
-      }    
-
       self = this
-      axios.post('/produccion',datos).then(function (response) {        
-        let modelo = {
-          'model': response.data.result.model,
-          'mean_squared_error': response.data.result.mean_squared_error,
-          'r2_score': response.data.result.r2_score
+      axios.post('/produccion',datos).then(function (response) {
+        self.resultado = []
+
+        let modelo = ''
+        switch (response.data.result.model) {
+          case 'lr':
+            modelo = 'Linear Regression'
+            break
+          case 'lasso':
+            modelo = 'Lasso'
+            break
+          case 'ridge':
+            modelo = 'Ridge'
+            break
         }
 
-        self.resultado.push(modelo)
+        self.resultado.push({
+          'model': modelo,
+          'predic': response.data.result.predic[0]
+        })
         self.dialogResultado = true
       });
     },
@@ -667,11 +655,6 @@ var routes = [{
   component: modelos
 },
 {
-  path: '/testing',
-  name: 'testing',
-  component: testing
-},
-{
   path: '/produccion',
   name: 'produccion',
   component: produccion
@@ -692,7 +675,6 @@ new Vue({
   components: {
     home,
     modelos,
-    testing,
     produccion
   }
 })

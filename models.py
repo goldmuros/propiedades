@@ -12,17 +12,28 @@ df_r = pd.DataFrame()
 def prepararDatos(file, test_run):
   df = pd.read_csv(file)
   y = df['price_usd_per_m2']
-  if (test_run == 'Regularization'):
-    features_drops = ['Unnamed: 0', 'price_usd_per_m2']
-  else:
-    features_drops = ['Unnamed: 0', 'price_usd_per_m2', 'price_per_m2']
+  X = df
+
+  features_drops = ['Unnamed: 0', 'price_usd_per_m2', 'price_per_m2', 'price_aprox_usd']
   
-  X = df.drop(features_drops, axis=1)
-  print('HOLA ', len(X.columns))
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
-  X_train = StandardScaler().fit_transform(X_train)
-  X_test = StandardScaler().fit_transform(X_test)
+  columnas_a_truncar = ['price_aprox_usd', 'surface_total_in_m2',
+                      'surface_covered_in_m2', 'price_per_m2', 'rooms']
+
+  truncate_outliers(X_train, columnas_a_truncar, 1)
+
+  X_train = X_train.drop(features_drops, axis=1)
+  X_test = X_test.drop(features_drops, axis=1)
+
+  se = StandardScaler()
+
+  X_train = se.fit_transform(X_train)
+  X_test = se.transform(X_test)
+
+  # NO HACER ESTO, corto dedos!!!!!
+  # X_train = StandardScaler().fit_transform(X_train)
+  # X_test = StandardScaler().fit_transform(X_test)
   
   return X_train, X_test, y_train, y_test, df
 
@@ -49,7 +60,7 @@ def predict(data_input, model):
 
   model_fit = m.fit(X, y)
 
- 
+  #Pickle
   name_pickle = model + '.pkl'
   with open(name_pickle, 'wb') as f_model:
     pickle.dump(model_fit, f_model)
@@ -109,8 +120,6 @@ def predic_prod(data):
 
   data_list = read_data_json(data)
 
-  print('HOLA ', len(data_list[0]))
-
   predic = model_fit.predict(data_list)
 
   results = { 'model': model,
@@ -152,3 +161,14 @@ def read_data_json(data):
   ]]
 
   return df
+
+def truncate_outliers(dataframe, columnas, porcentaje_a_cortar):
+  for i in columnas:
+    lower = np.nanpercentile(dataframe[i], porcentaje_a_cortar)
+    higher = np.nanpercentile(dataframe[i], 100 - porcentaje_a_cortar)
+    
+    dataframe[i] = np.where((dataframe[i] < lower),
+                lower, dataframe[i])
+    dataframe[i] = np.where((dataframe[i] > higher),
+                higher, dataframe[i])
+

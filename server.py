@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, url_for, jsonify
-import pandas as pd
-import numpy as np
 import models as models
 
 app = Flask(__name__)

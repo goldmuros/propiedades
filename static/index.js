@@ -71,8 +71,6 @@ const modelos = {
     <v-parallax src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" class="text-md-center" height="850">
       <v-container grid-list-md>
         <v-layout column align-center justify-center class="white--text">
-          <h1>Entrenemos los modelos (Linear Regression, Lasso y Ridge)</h1>
-
           <form id="model_form" class="pt-2" role="form" enctype="multipart/form-data" method="POST">
             <v-container grid-list-md>
               <v-layout>
